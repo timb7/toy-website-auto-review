@@ -4,7 +4,7 @@ concurrency: ${{ github.event.number }}
 on: pull_request
 
 permissions:
-  id-token: read
+  id-token: write
   contents: read
 
 env:
