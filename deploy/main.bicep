@@ -13,9 +13,11 @@ param environmentType string
 param resourceNameSuffix string = uniqueString(resourceGroup().id)
 
 // Define the names for resources.
-var appServiceAppName = 'toy-website-${resourceNameSuffix}'
-var appServicePlanName = 'toy-website'
+var appServiceAppName = 'toy-website-linux-${resourceNameSuffix}'
+var appServicePlanName = 'toy-website-linux'
 var storageAccountName = 'mystorage${resourceNameSuffix}'
+
+var appServiceAppLinuxFrameworkVersion = 'node|14-lts'
 
 // Define the SKUs for each component based on the environment type.
 var environmentConfigurationMap = {
@@ -50,6 +52,10 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-01-15' = {
   name: appServicePlanName
   location: location
   sku: environmentConfigurationMap[environmentType].appServicePlan.sku
+  kind: 'linux'
+  properties: {
+    reserved: true
+  }
 }
 
 resource appServiceApp 'Microsoft.Web/sites@2021-01-15' = {
@@ -58,6 +64,9 @@ resource appServiceApp 'Microsoft.Web/sites@2021-01-15' = {
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
+    siteConfig: {
+      linuxFxVersion: 'node|14-lts'
+    }
   }
 }
 
